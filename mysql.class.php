@@ -6,30 +6,30 @@
 // +----------------------------------------------------------------------
 class MySQL{
   
-	private $db_mysql_hostname;
-	private $db_mysql_username;
-	private $db_mysql_password;
-	private $db_mysql_database;
-	private $db_mysql_port;
-	private $db_mysql_charset;
+  private $db_mysql_hostname;
+  private $db_mysql_username;
+  private $db_mysql_password;
+  private $db_mysql_database;
+  private $db_mysql_port;
+  private $db_mysql_charset;
 	
-	private $query_list = array();
+  private $query_list = array();
 	
-	//查询次数
-	public $query_count = 0;
-	//查询开始时间
-	public $query_start_time;
-	
-	//当前查询ID
-	protected $queryID;
-	//当前连接
-	protected $conn;
-	// 事务指令数
-	protected $transTimes = 0;
-	// 返回或者影响记录数
-    protected $numRows    = 0;
-    // 错误信息
-    protected $error      = '';
+  //查询次数
+  public $query_count = 0;
+  //查询开始时间
+  public $query_start_time;
+
+  //当前查询ID
+  protected $queryID;
+  //当前连接
+  protected $conn;
+  // 事务指令数
+  protected $transTimes = 0;
+  // 返回或者影响记录数
+  protected $numRows    = 0;
+  // 错误信息
+  protected $error      = '';
 	
 	public function __construct($hostname_or_conf,$username,$password,$database,$port = '3306',$char = 'utf8'){
 		if(is_array($hostname_or_conf)){
@@ -43,8 +43,8 @@ class MySQL{
 		}elseif(!empty($hostname_or_conf)||!empty($username)||!empty($password)||!empty($database))
 		{
 			 $this->db_mysql_hostname = $hostname_or_conf;
-	  		 $this->db_mysql_username = $username;
-	  		 $this->db_mysql_password = $password;
+	  	 $this->db_mysql_username = $username;
+	  	 $this->db_mysql_password = $password;
 	 		 $this->db_mysql_database = $database;
 			 $this->db_mysql_port = $port;
 			 $this->db_mysql_charset = $char;
@@ -52,8 +52,8 @@ class MySQL{
 		}else{
 			die('configuration error.');
 		}
-      	$this->connect();
-    }
+    $this->connect();
+  }
 	
 	private function connect(){
 		$server = $this->db_mysql_hostname.':'.$this->db_mysql_port;
@@ -62,14 +62,14 @@ class MySQL{
 		mysql_query("set names " . $this->db_mysql_charset, $this->conn);
 	}
 	/**
-     +----------------------------------------------------------
-     * 设置数据对象值
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     *table,where,order,limit,data,field,join,group,having
-     +----------------------------------------------------------
-     */
+  +----------------------------------------------------------
+  * 设置数据对象值
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  *table,where,order,limit,data,field,join,group,having
+  +----------------------------------------------------------
+  */
 	public function table($table){
 		$this->query_list['table'] = $table;
 		return $this;
@@ -107,31 +107,35 @@ class MySQL{
 		$this->query_list['data'] = $data;
 		return $this;
 	}
+  
 	public function field($fields){
 		$this->query_list['fields'] = $fields;
 		return $this;
 	}
+  
 	public function join($join){
 		$this->query_list['join'] = $join;
 		return $this;
 	}
+  
 	public function group($group){
 		$this->query_list['group'] = $group;
 		return $this;
 	}
+  
 	public function having($having){
 		$this->query_list['having'] = $having;
 		return $this;
 	}
 	/**
-     +----------------------------------------------------------
-     * 查询
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
+  +----------------------------------------------------------
+  * 查询
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
 	public function select(){
 		$select_sql = 'select ';
 		$fields = isset($this->query_list['fields'])?$this->query_list['fields']:'*';
@@ -148,14 +152,14 @@ class MySQL{
 		return $this->query($select_sql);
 	}
 	/**
-     +----------------------------------------------------------
-     * 增加
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
+  +----------------------------------------------------------
+  * 增加
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
 	public function add(){
 		$add_sql = 'insert into `'.$this->query_list['table'].'` (';
 		
@@ -173,14 +177,14 @@ class MySQL{
 		return $this->execute($add_sql);
 	}
 	/**
-     +----------------------------------------------------------
-     * 删除
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
+  +----------------------------------------------------------
+  * 删除
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
 	public function delete(){
 		$del_sql = 'delete from `'.$this->query_list['table'].'` where '.$this->query_list['where'];
 		
@@ -193,14 +197,14 @@ class MySQL{
 		
 	}
 	/**
-     +----------------------------------------------------------
-     * 更新
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
+  +----------------------------------------------------------
+  * 更新
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
 	public function update(){
 		$update_sql = 'update `'.$this->query_list['table'].'` set ';
 		$data = $this->query_list['data'];
@@ -223,249 +227,249 @@ class MySQL{
 		
 	}
 	 /**
-     +----------------------------------------------------------
-     * 执行查询 返回数据集
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $sql  sql指令
-     */
-    public function query($sql) {
-        if ( !$this->conn ) return false;
-        $this->queryStr = $sql;
-        //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
-        
-        $this->query_start_time = microtime(true);
-        
-        $this->queryID = mysql_query($sql, $this->conn);
-        $this->query_count++;
-        if ( false === $this->queryID ) {
-            $this->error();
-            return false;
-        } else {
-            $this->numRows = mysql_num_rows($this->queryID);
-            return $this->getAll();
-        }
+  +----------------------------------------------------------
+  * 执行查询 返回数据集
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param string $sql  sql指令
+  */
+  public function query($sql) {
+    if ( !$this->conn ) return false;
+    $this->queryStr = $sql;
+    //释放前次的查询结果
+    if ( $this->queryID ) {    $this->free();    }
+    
+    $this->query_start_time = microtime(true);
+    
+    $this->queryID = mysql_query($sql, $this->conn);
+    $this->query_count++;
+    if ( false === $this->queryID ) {
+        $this->error();
+        return false;
+    } else {
+        $this->numRows = mysql_num_rows($this->queryID);
+        return $this->getAll();
     }
+  }
 	/**
-     +----------------------------------------------------------
-     * 执行语句
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param string $sql  sql指令
-     +----------------------------------------------------------
-     */
-    public function execute($sql) {
-        if ( !$this->conn ) return false;
-        $this->queryStr = $sql;
-        //释放前次的查询结果
-        if ( $this->queryID ) {    $this->free();    }
-        
-        $this->query_start_time = microtime(true);
-        
-        $result =   mysql_query($sql, $this->conn) ;
-        $this->query_count++;
-        if ( false === $result) {
-            $this->error();
-            return false;
-        } else {
-            $this->numRows = mysql_affected_rows($this->conn);
-            return $this->numRows;
-        }
+  +----------------------------------------------------------
+  * 执行语句
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param string $sql  sql指令
+  +----------------------------------------------------------
+  */
+  public function execute($sql) {
+    if ( !$this->conn ) return false;
+    $this->queryStr = $sql;
+    //释放前次的查询结果
+    if ( $this->queryID ) {    $this->free();    }
+    
+    $this->query_start_time = microtime(true);
+    
+    $result =   mysql_query($sql, $this->conn) ;
+    $this->query_count++;
+    if ( false === $result) {
+        $this->error();
+        return false;
+    } else {
+        $this->numRows = mysql_affected_rows($this->conn);
+        return $this->numRows;
     }
+  }
 	/**
-     +----------------------------------------------------------
-     * 获得所有的查询数据
-     +----------------------------------------------------------
-     * @access private
-     +----------------------------------------------------------
-     * @return array
-     */
-    private function getAll() {
-        //返回数据集
-        $result = array();
-        if($this->numRows >0) {
-            while($row = mysql_fetch_assoc($this->queryID)){
-                $result[]   =   $row;
-            }
-            mysql_data_seek($this->queryID,0);
+  +----------------------------------------------------------
+  * 获得所有的查询数据
+  +----------------------------------------------------------
+  * @access private
+  +----------------------------------------------------------
+  * @return array
+  */
+  private function getAll() {
+    //返回数据集
+    $result = array();
+    if($this->numRows >0) {
+        while($row = mysql_fetch_assoc($this->queryID)){
+            $result[]   =   $row;
         }
-        return $result;
+        mysql_data_seek($this->queryID,0);
     }
+    return $result;
+  }
 	/**
-     +----------------------------------------------------------
-     * 取得数据表的字段信息
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function getFields($tableName) {
-        $result =   $this->query('SHOW COLUMNS FROM `'.$tableName.'`');
-        $info   =   array();
-        if($result) {
-            foreach ($result as $key => $val) {
-                $info[$val['Field']] = array(
-                    'name'    => $val['Field'],
-                    'type'    => $val['Type'],
-                    'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
-                    'default' => $val['Default'],
-                    'primary' => (strtolower($val['Key']) == 'pri'),
-                    'autoinc' => (strtolower($val['Extra']) == 'auto_increment'),
-                );
-            }
-        }
-        return $info;
+  +----------------------------------------------------------
+  * 取得数据表的字段信息
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  */
+  public function getFields($tableName) {
+    $result =   $this->query('SHOW COLUMNS FROM `'.$tableName.'`');
+    $info   =   array();
+    if($result) {
+      foreach ($result as $key => $val) {
+        $info[$val['Field']] = array(
+            'name'    => $val['Field'],
+            'type'    => $val['Type'],
+            'notnull' => (bool) ($val['Null'] === ''), // not null is empty, null is yes
+            'default' => $val['Default'],
+            'primary' => (strtolower($val['Key']) == 'pri'),
+            'autoinc' => (strtolower($val['Extra']) == 'auto_increment'),
+        );
+      }
     }
+    return $info;
+  }
 	/**
-     +----------------------------------------------------------
-     * 取得数据库的表信息
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function getTables($dbName='') {
-        if(!empty($dbName)) {
-           $sql    = 'SHOW TABLES FROM '.$dbName;
-        }else{
-           $sql    = 'SHOW TABLES ';
-        }
-        $result =   $this->query($sql);
-        $info   =   array();
-        foreach ($result as $key => $val) {
-            $info[$key] = current($val);
-        }
-        return $info;
+  +----------------------------------------------------------
+  * 取得数据库的表信息
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  */
+  public function getTables($dbName='') {
+    if(!empty($dbName)) {
+       $sql    = 'SHOW TABLES FROM '.$dbName;
+    }else{
+       $sql    = 'SHOW TABLES ';
     }
+    $result =   $this->query($sql);
+    $info   =   array();
+    foreach ($result as $key => $val) {
+        $info[$key] = current($val);
+    }
+    return $info;
+  }
 
 	/**
-     +----------------------------------------------------------
-     * 最后次操作的ID
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
-	 public function last_insert_id(){
+  +----------------------------------------------------------
+  * 最后次操作的ID
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
+	public function last_insert_id(){
         return mysql_insert_id($this->conn);
-    }
-    /**
-     * 执行一条带有结果集计数的
-     */
-    public function count($sql){
-        return $this->execute($sql);
-    }
+  }
+  /**
+   * 执行一条带有结果集计数的
+  */
+  public function count($sql){
+      return $this->execute($sql);
+  }
 	/**
-     +----------------------------------------------------------
-     * 启动事务
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return void
-     +----------------------------------------------------------
-     */
-    public function startTrans() {
-        if ($this->transTimes == 0) {
-            mysql_query('START TRANSACTION', $this->conn);
-        }
-        $this->transTimes++;
-        return ;
+  +----------------------------------------------------------
+  * 启动事务
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @return void
+  +----------------------------------------------------------
+  */
+  public function startTrans() {
+    if ($this->transTimes == 0) {
+        mysql_query('START TRANSACTION', $this->conn);
     }
+    $this->transTimes++;
+    return ;
+  }
 
-    /**
-     +----------------------------------------------------------
-     * 提交事务
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-    public function commit()
-    {
-        if ($this->transTimes > 0) {
-            $result = mysql_query('COMMIT', $this->conn);
-            $this->transTimes = 0;
-            if(!$result){
-                throw new Exception($this->error());
-            }
-        }
-        return true;
+  /**
+  +----------------------------------------------------------
+  * 提交事务
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @return boolen
+  +----------------------------------------------------------
+  */
+  public function commit()
+  {
+    if ($this->transTimes > 0) {
+      $result = mysql_query('COMMIT', $this->conn);
+      $this->transTimes = 0;
+      if(!$result){
+          throw new Exception($this->error());
+      }
     }
+    return true;
+  }
 
-    /**
-     +----------------------------------------------------------
-     * 事务回滚
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @return boolen
-     +----------------------------------------------------------
-     */
-    public function rollback()
-    {
-        if ($this->transTimes > 0) {
-            $result = mysql_query('ROLLBACK', $this->conn);
-            $this->transTimes = 0;
-            if(!$result){
-                throw new Exception($this->error());
-            }
-        }
-        return true;
+  /**
+  +----------------------------------------------------------
+  * 事务回滚
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @return boolen
+  +----------------------------------------------------------
+  */
+  public function rollback()
+  {
+    if ($this->transTimes > 0) {
+      $result = mysql_query('ROLLBACK', $this->conn);
+      $this->transTimes = 0;
+      if(!$result){
+          throw new Exception($this->error());
+      }
     }
+    return true;
+  }
+  /**
+  +----------------------------------------------------------
+  * 错误信息
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
+  public function error() {
+    $this->error = mysql_error($this->conn);
+    if('' != $this->queryStr){
+        $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
+    }
+    return $this->error;
+  }
 	/**
-     +----------------------------------------------------------
-     * 错误信息
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
-	 public function error() {
-        $this->error = mysql_error($this->conn);
-        if('' != $this->queryStr){
-            $this->error .= "\n [ SQL语句 ] : ".$this->queryStr;
-        }
-        return $this->error;
-    }
-	/**
-     +----------------------------------------------------------
-     * 释放查询结果
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
-    public function free() {
-        @mysql_free_result($this->queryID);
-        $this->queryID = 0;
-        $this->query_list = null;
-    }
-    /**
-     +----------------------------------------------------------
-     * 关闭连接
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     * @param 
-     +----------------------------------------------------------
-     */
+  +----------------------------------------------------------
+  * 释放查询结果
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  */
+  public function free() {
+    @mysql_free_result($this->queryID);
+    $this->queryID = 0;
+    $this->query_list = null;
+  }
+  /**
+  +----------------------------------------------------------
+  * 关闭连接
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  * @param 
+  +----------------------------------------------------------
+  */
 	function close(){
 		if ($this->conn && !mysql_close($this->conn)){
-            throw new Exception($this->error());
-        }
-        $this->conn = 0;
-        $this->query_count = 0;
+      throw new Exception($this->error());
+    }
+    $this->conn = 0;
+    $this->query_count = 0;
 	}
-	/**
-     +----------------------------------------------------------
-     * 析构方法
-     +----------------------------------------------------------
-     * @access public
-     +----------------------------------------------------------
-     */
+  /**
+  +----------------------------------------------------------
+  * 析构方法
+  +----------------------------------------------------------
+  * @access public
+  +----------------------------------------------------------
+  */
 	function __destruct(){
 		 $this->close();
 	}
