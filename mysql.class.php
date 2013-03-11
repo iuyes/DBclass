@@ -161,8 +161,8 @@ class MySQL{
   {
     $select_sql = 'select ';
     $fields = isset($this->query_list['fields'])?$this->query_list['fields']:'*';
-    $select_sql.=$fields;
-    $select_sql.= ' from `'.$this->query_list['table'].'` ';
+    $select_sql .= $fields;
+    $select_sql .= ' from `'.$this->query_list['table'].'` ';
     
     isset($this->query_list['join'])?($select_sql.=$this->query_list['join']):'';
     isset($this->query_list['where'])?($select_sql.=' where '.$this->query_list['where']):'';
@@ -307,7 +307,7 @@ class MySQL{
     
     $this->query_start_time = microtime(true);
     
-    $result =   mysql_query($sql, $this->conn) ;
+    $result = mysql_query($sql, $this->conn) ;
     $this->query_count**;
     if ( false === $result) 
     {
